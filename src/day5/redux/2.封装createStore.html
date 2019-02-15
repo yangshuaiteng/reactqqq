@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <div id="title"></div>
+    <div id="content"></div>
+</body>
+</html>
+<script>
+    let title=document.getElementById("title"),
+    content=document.getElementById("content");
+    const CHANGE_TITLE= "CHANGE_TITLE";   
+    function createStore(reducer) {
+    let  state
+    let getState=()=>JSON.parse(JSON.stringify(state))
+    function dispatch(action) {
+        state=reducer(state,action)
+    }
+    dispatch({})
+    return {
+        getState,
+        dispatch,
+    }
+    }
+    let initState={
+        title:{color:"red",text:"这是一个标题"},
+        content:{color:"blue",text:"这是一段话"}
+    };
+    function reducer(state=initState,action) {
+        switch (action.type) {
+            case CHANGE_TITLE:
+           return {...state,title:{...state.title,text:action.text}}
+        }
+        return state
+    }
+    let store=createStore(reducer)
+    //渲染标题和字体颜色的
+    function renderTitle() {
+        title.innerHTML=store.getState().title.text;
+        title.style.color=store.getState().title.color;
+    }
+    //渲染内容和字体颜色的
+    function renderContent() {
+        content.innerHTML=store.getState().content.text;
+        content.style.color=store.getState().content.color;
+    }
+    function renderApp() {
+        renderTitle();
+        renderContent();
+    }
+    renderApp()
+    setTimeout(() => {
+        store.dispatch({type:CHANGE_TITLE,text:"今天下雨适合睡觉"})
+        renderApp()
+    }, 2000);
+
+</script>
